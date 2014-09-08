@@ -38,6 +38,26 @@
                ReferencedContainer = "container:Dimensions.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "201CF8A019AB0510001959F7"
+               BuildableName = "DemoTests.xctest"
+               BlueprintName = "DemoTests"
+               ReferencedContainer = "container:Dimensions.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "206BF3A719BC4EBB00549739"
+               BuildableName = "DynamicSystemTests.xctest"
+               BlueprintName = "DynamicSystemTests"
+               ReferencedContainer = "container:Dimensions.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

@@ -4,14 +4,44 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>Demo.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 		<key>Dimensions.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>DynamicSystem.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>201CF87C19AB0510001959F7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>201CF8A019AB0510001959F7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>206BF38B19BC4EBB00549739</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>206BF3A719BC4EBB00549739</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>20EAD5DF19AA4BD3002B96DA</key>
 		<dict>
 			<key>primary</key>
