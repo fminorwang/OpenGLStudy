@@ -7,6 +7,8 @@
 //
 
 #import "WSLViewController.h"
+#import <OpenGLES/gltypes.h>
+#import <OpenGLES/ES2/glext.h>
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
