@@ -10,9 +10,15 @@
 
 @interface VertexShaderCompiler : NSObject
 {
-    GLuint                              _program;
+
 }
 
 + (VertexShaderCompiler *)sharedCompiler;
+
+- (BOOL)loadShadersWithProgram:(GLuint *)program;
+- (BOOL)loadShadersWithFileName:(NSString *)fileName
+                     attributes:(NSDictionary *)attributes uniforms:(NSDictionary *)uniforms
+                        program:(GLuint *)program;
+
 
 @end

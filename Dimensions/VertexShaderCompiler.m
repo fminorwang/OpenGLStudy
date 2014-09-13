@@ -9,19 +9,12 @@
 #import "VertexShaderCompiler.h"
 #import <GLKit/GLKit.h>
 
+#define VERTEX_SHADER_FILE_EXTEND_NAME              @"vsh"
+#define FREGMENT_SHADER_FILE_EXTEND_NAME            @"fsh"
+
 static VertexShaderCompiler *_gVertexShaderCompiler;
 
 @implementation VertexShaderCompiler
-
-- (id)init
-{
-    self = [super init];
-    if ( _gVertexShaderCompiler == nil ) {
-        _gVertexShaderCompiler = self;
-    }
-    
-    return _gVertexShaderCompiler;
-}
 
 + (VertexShaderCompiler *)sharedCompiler
 {
@@ -33,43 +26,56 @@ static VertexShaderCompiler *_gVertexShaderCompiler;
 
 #pragma mark -  OpenGL ES 2 shader compilation
 
-- (BOOL)loadShaders
+- (BOOL)loadShadersWithProgram:(GLuint *)program
+{
+    return [self loadShadersWithFileName:@"Shader" attributes:nil uniforms:nil program:program];
+}
+
+- (BOOL)loadShadersWithFileName:(NSString *)fileName
+                     attributes:(NSDictionary *)attributes uniforms:(NSDictionary *)uniforms
+                        program:(GLuint *)program
 {
     GLuint vertShader, fragShader;
     NSString *vertShaderPathname, *fragShaderPathname;
     
     // Create shader program.
-    _program = glCreateProgram();
+    *program = glCreateProgram();
     
 #pragma mark file names
     // Create and compile vertex shader.
-    vertShaderPathname = [[NSBundle mainBundle] pathForResource:@"DynamicSystemShader" ofType:@"vsh"];
+    vertShaderPathname = [[NSBundle mainBundle] pathForResource:fileName
+                                                         ofType:VERTEX_SHADER_FILE_EXTEND_NAME];
     if (![self compileShader:&vertShader type:GL_VERTEX_SHADER file:vertShaderPathname]) {
         NSLog(@"Failed to compile vertex shader");
         return NO;
     }
     
     // Create and compile fragment shader.
-    fragShaderPathname = [[NSBundle mainBundle] pathForResource:@"DynamicSystemShader" ofType:@"fsh"];
+    fragShaderPathname = [[NSBundle mainBundle] pathForResource:fileName
+                                                         ofType:FREGMENT_SHADER_FILE_EXTEND_NAME];
     if (![self compileShader:&fragShader type:GL_FRAGMENT_SHADER file:fragShaderPathname]) {
         NSLog(@"Failed to compile fragment shader");
         return NO;
     }
     
     // Attach vertex shader to program.
-    glAttachShader(_program, vertShader);
+    glAttachShader(*program, vertShader);
     
     // Attach fragment shader to program.
-    glAttachShader(_program, fragShader);
+    glAttachShader(*program, fragShader);
     
     // Bind attribute locations.
     // This needs to be done prior to linking.
 #pragma warning variable names
-    glBindAttribLocation(_program, GLKVertexAttribPosition, "position");
-    
+    for ( NSString *_key in [attributes allKeys] ) {
+        GLint _keyType = [_key intValue];
+        const char *_attributeName = [[attributes objectForKey:_key] UTF8String];
+        glBindAttribLocation(*program, _keyType, _attributeName);
+    }
+
     // Link program.
-    if (![self linkProgram:_program]) {
-        NSLog(@"Failed to link program: %d", _program);
+    if (![self linkProgram:*program]) {
+        NSLog(@"Failed to link program: %d", *program);
         
         if (vertShader) {
             glDeleteShader(vertShader);
@@ -79,9 +85,9 @@ static VertexShaderCompiler *_gVertexShaderCompiler;
             glDeleteShader(fragShader);
             fragShader = 0;
         }
-        if (_program) {
-            glDeleteProgram(_program);
-            _program = 0;
+        if (program) {
+            glDeleteProgram(*program);
+            program = 0;
         }
         
         return NO;
@@ -90,16 +96,21 @@ static VertexShaderCompiler *_gVertexShaderCompiler;
     // Get uniform locations.
     // 设置全局变量
 #pragma warning how to set variables?
-    // uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX] = glGetUniformLocation(_program, "modelViewMatrix");
-    // uniforms[UNIFORM_PROJECTION_MATRIX] = glGetUniformLocation(_program, "projectionMatrix");
+    // uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX] = glGetUniformLocation(program, "modelViewMatrix");
+    // uniforms[UNIFORM_PROJECTION_MATRIX] = glGetUniformLocation(program, "projectionMatrix");
+    
+    for ( NSString *_key in uniforms.allKeys ) {
+        GLuint _keyPtr = [_key intValue];
+        _keyPtr = glGetUniformLocation(*program, [[uniforms objectForKey:_key] UTF8String]);
+    }
     
     // Release vertex and fragment shaders.
     if (vertShader) {
-        glDetachShader(_program, vertShader);
+        glDetachShader(*program, vertShader);
         glDeleteShader(vertShader);
     }
     if (fragShader) {
-        glDetachShader(_program, fragShader);
+        glDetachShader(*program, fragShader);
         glDeleteShader(fragShader);
     }
     

@@ -7,6 +7,7 @@
 //
 
 #import "DynamicViewController.h"
+#import "VertexShaderCompiler.h"
 #import <OpenGLES/ES2/glext.h>
 
 #define NUM_OF_ALL_INDICES              10000
@@ -123,7 +124,13 @@ typedef struct {
 {
     [EAGLContext setCurrentContext:self.context];
     
-    [self loadShaders];
+    NSDictionary *_attributes = @{ @(GLKVertexAttribPosition) : @"position" };
+    NSDictionary *_uniforms = @{ @(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX]) : @"modelViewMatrix",
+                                 @(uniforms[UNIFORM_PROJECTION_MATRIX]) : @"projectionMatrix"  };
+    [[VertexShaderCompiler sharedCompiler] loadShadersWithFileName:@"DynamicSystemShader"
+                                                        attributes:_attributes
+                                                          uniforms:_uniforms
+                                                           program:&_program];
     
     self.effect = [[GLKBaseEffect alloc] init];
     _factor = 0.2f;
