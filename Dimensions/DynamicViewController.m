@@ -9,6 +9,7 @@
 #import "DynamicViewController.h"
 
 #define NUM_OF_ALL_INDICES              10000
+#define MAX_COUNT                       100000
 
 // Uniform index.
 enum
@@ -32,20 +33,23 @@ typedef struct {
     float Color[4];
 } Vertex;
 
-const GLubyte indices[] = {
-    0, 1, 2,
-    2, 3, 0
-};
-
 @interface DynamicViewController()
 {
     GLuint                  _vertexBuffer;
+    GLuint                  _vertexBuffer2;
     GLuint                  _indexBuffer;
+    
     GLuint                  _program;
     
     CGFloat                 _factor;
+    BOOL                    _increase;
     
-    Vertex                  *_vertexPtr;
+    // Vertex                  *_vertexPtr;
+    Vertex                  _movePoint;
+    Vertex                  _movePoint2;
+    int                     _numberOfPoints;
+    Vertex                  *_historyPoints;
+    Vertex                  *_historyPoints2;
 }
 
 @end
@@ -67,6 +71,7 @@ const GLubyte indices[] = {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.navigationController.interactivePopGestureRecognizer.enabled = YES;
     
     _context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     if ( !_context ) {
@@ -76,13 +81,32 @@ const GLubyte indices[] = {
     GLKView *__view = (GLKView *)self.view;
     __view.context = _context;
     
+    _increase = YES;
+    
+    /*
     _vertexPtr = malloc(sizeof(Vertex) * NUM_OF_ALL_INDICES);
     for ( int i = 0 ; i < NUM_OF_ALL_INDICES ; i++ ) {
         _vertexPtr[i] = (Vertex){
-            { i * 0.0001 , 0.0, 0.0 },
+            { -1.0 + i * 0.0002 , 0.0, 0.0 },
             { 0.0, 0.0, 0.0, 1.0}
         };
     }
+     */
+     
+    _movePoint = (Vertex) {
+        { 25.0, 25.0, 0.0 },
+        { 0.0, 0.0, 0.0, 1.0 }
+    };
+    
+    _movePoint2 = (Vertex) {
+        { -0.8, -1.2, 0 },
+        { 0.0, 0.0, 0.0, 1.0}
+    };
+    
+    _numberOfPoints = 2;
+    _historyPoints = malloc(sizeof(Vertex) * MAX_COUNT);
+    _historyPoints[_numberOfPoints - 2] = _movePoint;
+    _historyPoints[_numberOfPoints - 1] = _movePoint2;
     
     [self _setupGL];
 }
@@ -99,14 +123,25 @@ const GLubyte indices[] = {
     [self loadShaders];
     
     self.effect = [[GLKBaseEffect alloc] init];
+    GLKMatrix4 _modelViewMatrix = GLKMatrix4Identity;
+    _factor = 0.3f;
+    _modelViewMatrix = GLKMatrix4Scale(_modelViewMatrix, 0.3f, 0.3f, 1.0f);
+    _modelViewMatrix = GLKMatrix4Translate(_modelViewMatrix, 0.0f, 0.0f, -15.f);
+    self.effect.transform.modelviewMatrix = _modelViewMatrix;
     
     glGenBuffers(1, &_vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * NUM_OF_ALL_INDICES, _vertexPtr, GL_STATIC_DRAW);
+    // glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * NUM_OF_ALL_INDICES, _vertexPtr, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _numberOfPoints, _historyPoints, GL_STATIC_DRAW);
     
     glGenBuffers(1, &_indexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Vertex) * NUM_OF_ALL_INDICES, _vertexPtr, GL_STATIC_DRAW);
+    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Vertex) * NUM_OF_ALL_INDICES, _vertexPtr, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Vertex) * _numberOfPoints, &_historyPoints, GL_STATIC_DRAW);
+    
+//    glGenBuffers(1, &_vertexBuffer2);
+//    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer2);
+//    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _numberOfPoints, _historyPoints2, GL_STATIC_DRAW);
 }
 
 - (void)_tearDownGL
@@ -136,13 +171,72 @@ const GLubyte indices[] = {
 {
     float _aspect = self.view.bounds.size.width / self.view.bounds.size.height;
     GLKMatrix4 _projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f),
-                                                             _aspect, 4.0f, 10.f);
+                                                             _aspect, 1.0f, 21.f);
     self.effect.transform.projectionMatrix = _projectionMatrix;
     
+    _factor += ( self.timeSinceLastUpdate * 0.5 ) * ( _increase ? 1 : -1 );
+    if ( _factor >= 2 ) {
+        _increase = NO;
+    }
+    if ( _factor <= 0.5 ) {
+        _increase = YES;
+    }
+    NSLog(@"_factor = %f", -_factor);
+    
     GLKMatrix4 _modelViewMatrix = GLKMatrix4Identity;
-    _modelViewMatrix = GLKMatrix4Translate(_modelViewMatrix, 0.0f, 0.0f, -6.0);
-    // _rotation += 90 * self.timeSinceLastUpdate;
+    _modelViewMatrix = GLKMatrix4Translate(_modelViewMatrix, 0.0f, 0.0f, -15.f);
+    _modelViewMatrix = GLKMatrix4Scale(_modelViewMatrix, _factor, _factor, _factor);
     self.effect.transform.modelviewMatrix = _modelViewMatrix;
+
+    /*
+     dx/dt = ax + by;
+     dy/dt = cx + dy;
+     */
+    float a = 0.1;
+    float b = 0.2;
+    float c = -0.3;
+    float d = -0.2;
+    
+    float dt = self.timeSinceLastUpdate * 0.02 ;
+    float x = _movePoint.Position[0];
+    float y = _movePoint.Position[1];
+    float z = _movePoint.Position[2];
+    
+    /*
+    _movePoint.Position[0] += dt * ( a * x + b * y );
+    _movePoint.Position[1] += dt * ( c * x + d * y );
+    _movePoint.Position[2] = 0.0;
+     */
+    _movePoint.Position[0] += dt * ( 10 * ( y - x ) );
+    _movePoint.Position[1] += dt * ( 3 * x - y - x * z );
+    _movePoint.Position[2] += dt * ( x * y - 8.0 * z / 3.0 );
+    
+    _numberOfPoints++;
+    _numberOfPoints++;
+    _historyPoints[_numberOfPoints - 2] = _movePoint;
+    NSLog(@"%f, %f, %f", _movePoint.Position[0], _movePoint.Position[1], _movePoint.Position[2]);
+    
+    x = _movePoint2.Position[0];
+    y = _movePoint2.Position[1];
+    
+    /*
+    _movePoint2.Position[0] += dt * ( a * x + b * y );
+    _movePoint2.Position[1] += dt * ( c * x + d * y );
+    _movePoint2.Position[2] = 0.0;
+     */
+    
+    _historyPoints[_numberOfPoints - 1] = _movePoint2;
+    
+    // glGenBuffers(1, &_vertexBuffer);
+    // glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+    // glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * NUM_OF_ALL_INDICES, _vertexPtr, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _numberOfPoints, _historyPoints, GL_STATIC_DRAW);
+    // glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _numberOfPoints, _historyPoints2, GL_STATIC_DRAW);
+    
+    // glGenBuffers(1, &_indexBuffer);
+    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
+    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Vertex) * NUM_OF_ALL_INDICES, _vertexPtr, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Vertex) * _numberOfPoints, _historyPoints, GL_STATIC_DRAW);
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
@@ -172,11 +266,7 @@ const GLubyte indices[] = {
     glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, self.effect.transform.modelviewMatrix.m);
     glUniformMatrix4fv(uniforms[UNIFORM_PROJECTION_MATRIX], 1, 0, self.effect.transform.projectionMatrix.m);
     
-    // glDrawArrays(GL_TRIANGLES, 0, 36);
-    // glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-    glDrawArrays(GL_POINTS, 0 , NUM_OF_ALL_INDICES);
-
-    
+    glDrawArrays(GL_POINTS, 0 , _numberOfPoints/* NUM_OF_ALL_INDICES */ );
 }
 
 #pragma mark -  OpenGL ES 2 shader compilation
