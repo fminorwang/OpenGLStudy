@@ -100,8 +100,8 @@ static VertexShaderCompiler *_gVertexShaderCompiler;
     // uniforms[UNIFORM_PROJECTION_MATRIX] = glGetUniformLocation(program, "projectionMatrix");
     
     for ( NSString *_key in uniforms.allKeys ) {
-        GLuint _keyPtr = [_key intValue];
-        _keyPtr = glGetUniformLocation(*program, [[uniforms objectForKey:_key] UTF8String]);
+        GLuint *_ptr = [[uniforms objectForKey:_key] pointerValue];
+        *_ptr = glGetUniformLocation(*program, [_key UTF8String]);
     }
     
     // Release vertex and fragment shaders.

@@ -22,6 +22,17 @@ enum
 };
 GLint uniforms[NUM_UNIFORMS];
 
+enum
+{
+    S_UNIFORM_MODELVIEWPROJECTION_MATRIX,
+    S_UNIFORM_PROJECTION_MATRIX,
+    S_RADIUS,
+    S_CENTER_POINT,
+    S_LATITUDE_COUNTS,
+    S_NUM_UNIFORMS
+};
+GLint sphereUniforms[S_NUM_UNIFORMS];
+
 // Attribute index.
 enum
 {
@@ -44,6 +55,7 @@ typedef struct {
     GLuint                  _sphereIndexBuffer;
     
     GLuint                  _program;
+    GLuint                  _sphereProgram;
     
     CGFloat                 _factor;
     BOOL                    _increase;
@@ -105,13 +117,31 @@ typedef struct {
     _historyPoints[_numberOfPoints - 1] = _movePoint2;
     
     _spherePoints = malloc(10 * sizeof(Vertex));
-    for ( int i = 0 ; i < 10 ; i++ ) {
-        _spherePoints[i] = (Vertex) {
-            {0.1 * i, 0.0, 0.0 },
-            {0.0, 0.0, 0.0, 1.0}
-        };
-    }
-    
+    _spherePoints[0] = (Vertex) {
+        {0.0, 0.0, 1.0},
+        {0.0, 0.0, 0.0, 1.0}
+    };
+    _spherePoints[1] = (Vertex) {
+        {1.0, 0.0, 4.0},
+        {0.0, 0.0, 0.0, 1.0}
+    };
+    _spherePoints[2] = (Vertex) {
+        {1.0, 1.0, 4.0},
+        {0.0, 0.0, 0.0, 1.0}
+    };
+    _spherePoints[3] = (Vertex) {
+        {1.0, 2.0, 4.0},
+        {0.0, 0.0, 0.0, 1.0}
+    };
+    _spherePoints[4] = (Vertex) {
+        {1.0, 3.0, 4.0},
+        {0.0, 0.0, 0.0, 1.0}
+    };
+    _spherePoints[5] = (Vertex) {
+        {2.0, 0.0, 4.0},
+        {0.0, 0.0, 0.0, 1.0}
+    };
+
     [self _setupGL];
 }
 
@@ -125,12 +155,29 @@ typedef struct {
     [EAGLContext setCurrentContext:self.context];
     
     NSDictionary *_attributes = @{ @(GLKVertexAttribPosition) : @"position" };
-    NSDictionary *_uniforms = @{ @(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX]) : @"modelViewMatrix",
-                                 @(uniforms[UNIFORM_PROJECTION_MATRIX]) : @"projectionMatrix"  };
+    
+    NSDictionary *_sphereUniforms = @
+    {   @"modelViewMatrix"  : [NSValue valueWithPointer:&(sphereUniforms[S_UNIFORM_MODELVIEWPROJECTION_MATRIX])] ,
+        @"projectionMatrix" : [NSValue valueWithPointer:&(sphereUniforms[S_UNIFORM_PROJECTION_MATRIX])],
+        @"centerPoint"      : [NSValue valueWithPointer:&(sphereUniforms[S_CENTER_POINT])],
+        @"radius"           : [NSValue valueWithPointer:&(sphereUniforms[S_RADIUS])],
+        @"latitudeCounts"   : [NSValue valueWithPointer:&(sphereUniforms[S_LATITUDE_COUNTS])]
+    };
+    [[VertexShaderCompiler sharedCompiler] loadShadersWithFileName:@"SphereShader"
+                                                        attributes:_attributes
+                                                          uniforms:_sphereUniforms
+                                                           program:&_sphereProgram];
+    
+    NSDictionary *_uniforms = @{
+                                @"modelViewMatrix"  : [NSValue valueWithPointer:&(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX])] ,
+                                @"projectionMatrix" : [NSValue valueWithPointer:&(uniforms[UNIFORM_PROJECTION_MATRIX])],  };
     [[VertexShaderCompiler sharedCompiler] loadShadersWithFileName:@"DynamicSystemShader"
                                                         attributes:_attributes
                                                           uniforms:_uniforms
                                                            program:&_program];
+    
+
+    
     
     self.effect = [[GLKBaseEffect alloc] init];
     _factor = 0.2f;
@@ -147,7 +194,7 @@ typedef struct {
     // sphere
     glGenBuffers(1, &_sphereBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, _sphereBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 10, &_spherePoints , GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 6, _spherePoints , GL_STATIC_DRAW);
 }
 
 - (void)_tearDownGL
@@ -207,7 +254,7 @@ typedef struct {
     _numberOfPoints++;
     _numberOfPoints++;
     _historyPoints[_numberOfPoints - 2] = _movePoint;
-    NSLog(@"%f, %f, %f", _movePoint.Position[0], _movePoint.Position[1], _movePoint.Position[2]);
+    // NSLog(@"%f, %f, %f", _movePoint.Position[0], _movePoint.Position[1], _movePoint.Position[2]);
     
     x = _movePoint2.Position[0];
     y = _movePoint2.Position[1];
@@ -222,7 +269,7 @@ typedef struct {
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _numberOfPoints, _historyPoints, GL_STATIC_DRAW);
     
     glBindBuffer(GL_ARRAY_BUFFER, _sphereBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 10, _spherePoints, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 6, _spherePoints, GL_STATIC_DRAW);
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
@@ -272,164 +319,15 @@ typedef struct {
     // glBindVertexArrayOES(_vertexBuffer);
     
     // Render the object again with ES2
-    glUseProgram(_program);
+    glUseProgram(_sphereProgram);
     
-    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, self.effect.transform.modelviewMatrix.m);
-    glUniformMatrix4fv(uniforms[UNIFORM_PROJECTION_MATRIX], 1, 0, self.effect.transform.projectionMatrix.m);
+    glUniformMatrix4fv(sphereUniforms[S_UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, self.effect.transform.modelviewMatrix.m);
+    glUniformMatrix4fv(sphereUniforms[S_UNIFORM_PROJECTION_MATRIX], 1, 0, self.effect.transform.projectionMatrix.m);
+    glUniform1f(sphereUniforms[S_RADIUS], 0.5f);
+    glUniform1i(sphereUniforms[S_LATITUDE_COUNTS], 3.0);
+    glUniform4f(sphereUniforms[S_CENTER_POINT], _movePoint.Position[0], _movePoint.Position[1], _movePoint.Position[2], 1.0f);
     
-    glDrawArrays(GL_POINTS, 0 , 10 );
-}
-
-#pragma mark -  OpenGL ES 2 shader compilation
-
-- (BOOL)loadShaders
-{
-    GLuint vertShader, fragShader;
-    NSString *vertShaderPathname, *fragShaderPathname;
-    
-    // Create shader program.
-    _program = glCreateProgram();
-    
-    // Create and compile vertex shader.
-    vertShaderPathname = [[NSBundle mainBundle] pathForResource:@"DynamicSystemShader" ofType:@"vsh"];
-    if (![self compileShader:&vertShader type:GL_VERTEX_SHADER file:vertShaderPathname]) {
-        NSLog(@"Failed to compile vertex shader");
-        return NO;
-    }
-    
-    // Create and compile fragment shader.
-    fragShaderPathname = [[NSBundle mainBundle] pathForResource:@"DynamicSystemShader" ofType:@"fsh"];
-    if (![self compileShader:&fragShader type:GL_FRAGMENT_SHADER file:fragShaderPathname]) {
-        NSLog(@"Failed to compile fragment shader");
-        return NO;
-    }
-    
-    // Attach vertex shader to program.
-    glAttachShader(_program, vertShader);
-    
-    // Attach fragment shader to program.
-    glAttachShader(_program, fragShader);
-    
-    // Bind attribute locations.
-    // This needs to be done prior to linking.
-    glBindAttribLocation(_program, GLKVertexAttribPosition, "position");
-    
-    // Link program.
-    if (![self linkProgram:_program]) {
-        NSLog(@"Failed to link program: %d", _program);
-        
-        if (vertShader) {
-            glDeleteShader(vertShader);
-            vertShader = 0;
-        }
-        if (fragShader) {
-            glDeleteShader(fragShader);
-            fragShader = 0;
-        }
-        if (_program) {
-            glDeleteProgram(_program);
-            _program = 0;
-        }
-        
-        return NO;
-    }
-    
-    // Get uniform locations.
-    // 设置全局变量
-    uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX] = glGetUniformLocation(_program, "modelViewMatrix");
-    uniforms[UNIFORM_PROJECTION_MATRIX] = glGetUniformLocation(_program, "projectionMatrix");
-    
-    // Release vertex and fragment shaders.
-    if (vertShader) {
-        glDetachShader(_program, vertShader);
-        glDeleteShader(vertShader);
-    }
-    if (fragShader) {
-        glDetachShader(_program, fragShader);
-        glDeleteShader(fragShader);
-    }
-    
-    return YES;
-}
-
-- (BOOL)compileShader:(GLuint *)shader type:(GLenum)type file:(NSString *)file
-{
-    GLint status;
-    const GLchar *source;
-    
-    source = (GLchar *)[[NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil] UTF8String];
-    if (!source) {
-        NSLog(@"Failed to load vertex shader");
-        return NO;
-    }
-    
-    *shader = glCreateShader(type);
-    glShaderSource(*shader, 1, &source, NULL);
-    glCompileShader(*shader);
-    
-#if defined(DEBUG)
-    GLint logLength;
-    glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &logLength);
-    if (logLength > 0) {
-        GLchar *log = (GLchar *)malloc(logLength);
-        glGetShaderInfoLog(*shader, logLength, &logLength, log);
-        NSLog(@"Shader compile log:\n%s", log);
-        free(log);
-    }
-#endif
-    
-    glGetShaderiv(*shader, GL_COMPILE_STATUS, &status);
-    if (status == 0) {
-        glDeleteShader(*shader);
-        return NO;
-    }
-    
-    return YES;
-}
-
-- (BOOL)linkProgram:(GLuint)prog
-{
-    GLint status;
-    glLinkProgram(prog);
-    
-#if defined(DEBUG)
-    GLint logLength;
-    glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logLength);
-    if (logLength > 0) {
-        GLchar *log = (GLchar *)malloc(logLength);
-        glGetProgramInfoLog(prog, logLength, &logLength, log);
-        NSLog(@"Program link log:\n%s", log);
-        free(log);
-    }
-#endif
-    
-    glGetProgramiv(prog, GL_LINK_STATUS, &status);
-    if (status == 0) {
-        return NO;
-    }
-    
-    return YES;
-}
-
-- (BOOL)validateProgram:(GLuint)prog
-{
-    GLint logLength, status;
-    
-    glValidateProgram(prog);
-    glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logLength);
-    if (logLength > 0) {
-        GLchar *log = (GLchar *)malloc(logLength);
-        glGetProgramInfoLog(prog, logLength, &logLength, log);
-        NSLog(@"Program validate log:\n%s", log);
-        free(log);
-    }
-    
-    glGetProgramiv(prog, GL_VALIDATE_STATUS, &status);
-    if (status == 0) {
-        return NO;
-    }
-    
-    return YES;
+    glDrawArrays(GL_TRIANGLE_STRIP, 0 , 6 );
 }
 
 @end

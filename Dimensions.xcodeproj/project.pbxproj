@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		2002D10A19AE410C001C8D19 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 2002D10919AE410C001C8D19 /* Shader.fsh */; };
 		20070B3619ACEC5000F1B169 /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 20070B3519ACEC5000F1B169 /* Shader.vsh */; };
+		201ADC0A19C740A700CB2E62 /* SphereShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 201ADC0819C740A700CB2E62 /* SphereShader.vsh */; };
+		201ADC0E19C740CB00CB2E62 /* SphereShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 201ADC0C19C740CB00CB2E62 /* SphereShader.fsh */; };
 		201CF87E19AB0510001959F7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20EAD5E319AA4BD3002B96DA /* Foundation.framework */; };
 		201CF87F19AB0510001959F7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20EAD5E519AA4BD3002B96DA /* CoreGraphics.framework */; };
 		201CF88019AB0510001959F7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20EAD5E719AA4BD3002B96DA /* UIKit.framework */; };
@@ -80,6 +82,8 @@
 /* Begin PBXFileReference section */
 		2002D10919AE410C001C8D19 /* Shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.fsh; sourceTree = "<group>"; };
 		20070B3519ACEC5000F1B169 /* Shader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.vsh; sourceTree = "<group>"; };
+		201ADC0819C740A700CB2E62 /* SphereShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = SphereShader.vsh; sourceTree = "<group>"; };
+		201ADC0C19C740CB00CB2E62 /* SphereShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = SphereShader.fsh; sourceTree = "<group>"; };
 		201CF87D19AB0510001959F7 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		201CF88119AB0510001959F7 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		201CF88319AB0510001959F7 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -195,6 +199,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		201ADC0719C7406400CB2E62 /* DynamicalSystem */ = {
+			isa = PBXGroup;
+			children = (
+				2039FCDB19B9BC15009391B9 /* DynamicViewController.h */,
+				2039FCDC19B9BC15009391B9 /* DynamicViewController.m */,
+				206BF3BF19BC52CA00549739 /* DynamicSystemShader.vsh */,
+				206BF3C119BC52DD00549739 /* DynamicSystemShader.fsh */,
+				201ADC0819C740A700CB2E62 /* SphereShader.vsh */,
+				201ADC0C19C740CB00CB2E62 /* SphereShader.fsh */,
+			);
+			name = DynamicalSystem;
+			sourceTree = "<group>";
+		};
 		201CF88519AB0510001959F7 /* Demo */ = {
 			isa = PBXGroup;
 			children = (
@@ -271,6 +288,7 @@
 		20EAD5E919AA4BD3002B96DA /* Dimensions */ = {
 			isa = PBXGroup;
 			children = (
+				201ADC0719C7406400CB2E62 /* DynamicalSystem */,
 				206BF3C319BC5BE300549739 /* VertexShaderCompiler.h */,
 				206BF3C419BC5BE300549739 /* VertexShaderCompiler.m */,
 				201CF8B819AB1FD5001959F7 /* ComplexOperators */,
@@ -285,10 +303,6 @@
 				20EAD5EA19AA4BD3002B96DA /* Supporting Files */,
 				20070B3519ACEC5000F1B169 /* Shader.vsh */,
 				2002D10919AE410C001C8D19 /* Shader.fsh */,
-				2039FCDB19B9BC15009391B9 /* DynamicViewController.h */,
-				2039FCDC19B9BC15009391B9 /* DynamicViewController.m */,
-				206BF3BF19BC52CA00549739 /* DynamicSystemShader.vsh */,
-				206BF3C119BC52DD00549739 /* DynamicSystemShader.fsh */,
 			);
 			path = Dimensions;
 			sourceTree = "<group>";
@@ -495,10 +509,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				20070B3619ACEC5000F1B169 /* Shader.vsh in Resources */,
+				201ADC0E19C740CB00CB2E62 /* SphereShader.fsh in Resources */,
 				20EAD5FC19AA4BD3002B96DA /* Images.xcassets in Resources */,
 				206BF3C219BC52DD00549739 /* DynamicSystemShader.fsh in Resources */,
 				20EAD5EE19AA4BD3002B96DA /* InfoPlist.strings in Resources */,
 				206BF3C019BC52CA00549739 /* DynamicSystemShader.vsh in Resources */,
+				201ADC0A19C740A700CB2E62 /* SphereShader.vsh in Resources */,
 				20EAD5F719AA4BD3002B96DA /* Main.storyboard in Resources */,
 				2002D10A19AE410C001C8D19 /* Shader.fsh in Resources */,
 			);
@@ -926,6 +942,7 @@
 				206BF3B719BC4EBB00549739 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		206BF3BB19BC4EBB00549739 /* Build configuration list for PBXNativeTarget "DynamicSystemTests" */ = {
 			isa = XCConfigurationList;
@@ -934,6 +951,7 @@
 				206BF3B919BC4EBB00549739 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		20EAD5DB19AA4BD3002B96DA /* Build configuration list for PBXProject "Dimensions" */ = {
 			isa = XCConfigurationList;
