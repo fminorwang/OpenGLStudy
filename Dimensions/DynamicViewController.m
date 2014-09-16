@@ -13,6 +13,8 @@
 #define NUM_OF_ALL_INDICES              10000
 #define MAX_COUNT                       100000
 
+#define NUM_OF_SPHERE_LATITUEDS         200
+#define NUM_OF_SPHERE_LONGLITUDES       24
 // Uniform index.
 enum
 {
@@ -116,29 +118,23 @@ typedef struct {
     _historyPoints[_numberOfPoints - 2] = _movePoint;
     _historyPoints[_numberOfPoints - 1] = _movePoint2;
     
-    _spherePoints = malloc(10 * sizeof(Vertex));
+    _spherePoints = malloc(( NUM_OF_SPHERE_LATITUEDS * NUM_OF_SPHERE_LONGLITUDES + 2 ) * sizeof(Vertex));
     _spherePoints[0] = (Vertex) {
         {0.0, 0.0, 1.0},
         {0.0, 0.0, 0.0, 1.0}
     };
-    _spherePoints[1] = (Vertex) {
-        {1.0, 0.0, 4.0},
-        {0.0, 0.0, 0.0, 1.0}
-    };
-    _spherePoints[2] = (Vertex) {
-        {1.0, 1.0, 4.0},
-        {0.0, 0.0, 0.0, 1.0}
-    };
-    _spherePoints[3] = (Vertex) {
-        {1.0, 2.0, 4.0},
-        {0.0, 0.0, 0.0, 1.0}
-    };
-    _spherePoints[4] = (Vertex) {
-        {1.0, 3.0, 4.0},
-        {0.0, 0.0, 0.0, 1.0}
-    };
-    _spherePoints[5] = (Vertex) {
-        {2.0, 0.0, 4.0},
+    
+    for ( int i = 0; i < NUM_OF_SPHERE_LATITUEDS; i++ ) {
+        for ( int j = 0 ; j < NUM_OF_SPHERE_LONGLITUDES ; j ++ ) {
+            _spherePoints[1 + NUM_OF_SPHERE_LONGLITUDES * i + j ] = (Vertex) {
+                { i + 1.0, (float)j, (float)NUM_OF_SPHERE_LONGLITUDES },
+                { 0.0, 0.0, 0.0, 1.0}
+            };
+        }
+    }
+    
+    _spherePoints[NUM_OF_SPHERE_LATITUEDS * NUM_OF_SPHERE_LONGLITUDES + 1] = (Vertex) {
+        {NUM_OF_SPHERE_LATITUEDS + 1.0, 0.0, 1.0},
         {0.0, 0.0, 0.0, 1.0}
     };
 
@@ -194,7 +190,8 @@ typedef struct {
     // sphere
     glGenBuffers(1, &_sphereBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, _sphereBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 6, _spherePoints , GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * (NUM_OF_SPHERE_LATITUEDS * NUM_OF_SPHERE_LONGLITUDES + 2),
+                 _spherePoints , GL_STATIC_DRAW);
 }
 
 - (void)_tearDownGL
@@ -269,7 +266,7 @@ typedef struct {
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _numberOfPoints, _historyPoints, GL_STATIC_DRAW);
     
     glBindBuffer(GL_ARRAY_BUFFER, _sphereBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 6, _spherePoints, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * (2 + NUM_OF_SPHERE_LATITUEDS * NUM_OF_SPHERE_LONGLITUDES), _spherePoints, GL_STATIC_DRAW);
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
@@ -323,11 +320,11 @@ typedef struct {
     
     glUniformMatrix4fv(sphereUniforms[S_UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, self.effect.transform.modelviewMatrix.m);
     glUniformMatrix4fv(sphereUniforms[S_UNIFORM_PROJECTION_MATRIX], 1, 0, self.effect.transform.projectionMatrix.m);
-    glUniform1f(sphereUniforms[S_RADIUS], 0.5f);
-    glUniform1i(sphereUniforms[S_LATITUDE_COUNTS], 3.0);
-    glUniform4f(sphereUniforms[S_CENTER_POINT], _movePoint.Position[0], _movePoint.Position[1], _movePoint.Position[2], 1.0f);
+    glUniform1f(sphereUniforms[S_RADIUS], 0.5);
+    glUniform1f(sphereUniforms[S_LATITUDE_COUNTS], NUM_OF_SPHERE_LATITUEDS + 2.0);
+    glUniform3fv(sphereUniforms[S_CENTER_POINT], 1, _movePoint.Position );
     
-    glDrawArrays(GL_TRIANGLE_STRIP, 0 , 6 );
+    glDrawArrays(GL_POINTS, 0 , NUM_OF_SPHERE_LATITUEDS * NUM_OF_SPHERE_LONGLITUDES + 2 );
 }
 
 @end
