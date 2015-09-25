@@ -45,12 +45,16 @@ typedef struct {
     GLuint                  _program;
     GLuint                  _sphereProgram;
     
+    CGFloat                 _originFactor;
     CGFloat                 _factor;
     BOOL                    _increase;
     
-    // Vertex                  *_vertexPtr;
     Vertex                  _movePoint;
     Vertex                  _movePoint2;
+    
+    float                   _originDistance;
+    float                   _currentDistance;
+    
     int                     _numberOfPoints;
     Vertex                  *_historyPoints;
     Vertex                  *_historyPoints2;
@@ -114,8 +118,10 @@ typedef struct {
         { 0.0, 0.0, 0.0, 1.0}
     };
     
+    _originDistance = MIN([self _distanceAtVertex:_movePoint], [self _distanceAtVertex:_movePoint2]);
+    _currentDistance = _originDistance;
+    
     _numberOfPoints = 2;
-//    _historyPoints = new Vertex[MAX_COUNT];
     _historyPoints = malloc(sizeof(Vertex) * MAX_COUNT);
     _historyPoints[_numberOfPoints - 2] = _movePoint;
     _historyPoints[_numberOfPoints - 1] = _movePoint2;
@@ -142,6 +148,7 @@ typedef struct {
     
     glEnable(GL_DEPTH_TEST);
 
+    _originFactor = 0.1f;
     _factor = 0.1f;
     
     // 轨迹
@@ -205,6 +212,15 @@ typedef struct {
     //glDeleteBuffers(1, &_indexBuffer);
     
     glDeleteBuffers(1, &_sphereBuffer);
+    glDeleteBuffers(1, &_pipeLineBuffer);
+    glDeleteBuffers(1, &_pipeLineBuffer2);
+    glDeleteBuffers(1, &_pipeIndicesBuffer);
+    
+    free(_pipeLinePoints2);
+    free(_pipeLinePoints);
+    
+    free(_historyPoints);
+    free(_historyPoints2);
     
     self.effect = nil;
 }
@@ -222,9 +238,13 @@ typedef struct {
 - (void)update
 {
     float dt = self.timeSinceLastUpdate * 2;
-
-    _factor += self.timeSinceLastUpdate * 0.03;
-    _radius = 0.1 * ( 0.2 / _factor ) ;
+    
+    float _newDistance = MIN([self _distanceAtVertex:_movePoint], [self _distanceAtVertex:_movePoint2]);
+    _currentDistance = MIN(_newDistance, _currentDistance);
+    
+//    _factor = _originFactor * ( _originDistance / _currentDistance );
+    _factor = _factor * powf(2, dt / 15.f);
+    _radius = 0.02 / _factor ;
     
     /*
      dx/dt = ax + by;
@@ -417,7 +437,6 @@ typedef struct {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _pipeIndicesBuffer);
     glDrawElements(GL_TRIANGLES, MAX(0, ( _numberOfPoints / 2 - 2 ) * PIPE_CIRCLE_POINT_COUNT * 2 * 3), GL_UNSIGNED_SHORT, 0);
     glDrawArrays(GL_POINTS, 0, ( _numberOfPoints / 2 - 1 ) * PIPE_CIRCLE_POINT_COUNT);
-
     
     [self.context presentRenderbuffer:GL_RENDERBUFFER];
     
@@ -462,6 +481,16 @@ typedef struct {
 //    glDrawElements(GL_TRIANGLES, 3 * NUM_OF_SPHERE_LONGLITUDES, GL_UNSIGNED_INT, _sphereIndexes);
 
     // glDrawArrays(GL_TRIANGLES, 0 , 6 /*NUM_OF_SPHERE_LATITUEDS * NUM_OF_SPHERE_LONGLITUDES + 2*/ );
+}
+
+- (float)_distanceAtVertex:(Vertex)vertex
+{
+    return [self _distanceForX:vertex.Position[0] Y:vertex.Position[1] Z:vertex.Position[2]];
+}
+
+- (float)_distanceForX:(float)x Y:(float)y Z:(float)z
+{
+    return sqrtf(x * x + y * y + z * z);
 }
 
 @end
