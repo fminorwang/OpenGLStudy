@@ -227,7 +227,7 @@ GLfloat gCubeVertexData[216] =
     // Render the object with GLKit
     [self.effect prepareToDraw];
     
-    // glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
     
     // Render the object again with ES2
     glUseProgram(_program);

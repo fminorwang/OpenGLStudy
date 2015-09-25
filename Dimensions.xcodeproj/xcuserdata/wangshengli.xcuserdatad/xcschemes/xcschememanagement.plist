@@ -19,6 +19,21 @@
 			<key>orderHint</key>
 			<integer>2</integer>
 		</dict>
+		<key>HelloArrow copy.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
+		<key>HelloArrow.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>HelloCone.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>5</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
@@ -28,6 +43,31 @@
 			<true/>
 		</dict>
 		<key>201CF8A019AB0510001959F7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>2044AF3C1AA56EEA005DA969</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>2044AF531AA5B723005DA969</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>2044AF6B1AA5B723005DA969</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>205F552F1AA0226000D1E8E4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>205F55471AA0226000D1E8E4</key>
 		<dict>
 			<key>primary</key>
 			<true/>

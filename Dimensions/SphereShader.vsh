@@ -1,6 +1,8 @@
 // SphereShader.vsh
 
-attribute vec4 position;        // x decides latitude, y decides longtitude, z = count of all x, w = count of all y
+// x decides latitude, y decides longtitude, z = count of all x, w = count of all y
+attribute vec4 position;
+attribute vec3 normal;
 
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
@@ -8,6 +10,8 @@ uniform mat4 projectionMatrix;
 uniform vec3 centerPoint;
 uniform float radius;
 uniform float latitudeCounts;
+
+// varying lowp vec4 colorVarying;
 
 void main()
 {
@@ -26,4 +30,13 @@ void main()
     // gl_Position = projectionMatrix * modelViewMatrix * vec4(0.0, 0.0, 0.0, 1.0);
     gl_Position = projectionMatrix * modelViewMatrix * _point;
     gl_PointSize = 1.0;
+    
+//    vec3 eyeNormal = normalize(normalMatrix * normal);
+//    vec3 lightPosition = vec3(0.0, 0.0, 1.0);
+//    vec4 diffuseColor = vec4(0.4, 0.4, 1.0, 1.0);
+//    
+//    float nDotVP = max(0.0, dot(eyeNormal, normalize(lightPosition)));
+//    
+//    colorVarying = diffuseColor * nDotVP;
+
 }
