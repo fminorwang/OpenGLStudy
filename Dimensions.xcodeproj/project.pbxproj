@@ -56,7 +56,17 @@
 		206BF3C219BC52DD00549739 /* DynamicSystemShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 206BF3C119BC52DD00549739 /* DynamicSystemShader.fsh */; };
 		206BF3C519BC5BE300549739 /* VertexShaderCompiler.m in Sources */ = {isa = PBXBuildFile; fileRef = 206BF3C419BC5BE300549739 /* VertexShaderCompiler.m */; };
 		207560121AA16DD100E01DFC /* RenderingEngine2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 207560111AA16DD100E01DFC /* RenderingEngine2.cpp */; };
-		20B1E1421BB59B9B00246DF6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20B1E1411BB59B9B00246DF6 /* LaunchScreen.storyboard */; settings = {ASSET_TAGS = (); }; };
+		20B1E1421BB59B9B00246DF6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20B1E1411BB59B9B00246DF6 /* LaunchScreen.storyboard */; };
+		20B636551BD21A2E004ADDA1 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20B636541BD21A2E004ADDA1 /* ViewController.m */; };
+		20B636571BD21A2E004ADDA1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20B636561BD21A2E004ADDA1 /* Assets.xcassets */; };
+		20B636601BD2E33F004ADDA1 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20B6365F1BD2E33F004ADDA1 /* GLUT.framework */; };
+		20B636621BD2E346004ADDA1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20B636611BD2E346004ADDA1 /* OpenGL.framework */; };
+		20B6367B1BD2E76B004ADDA1 /* GLBatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 20B636751BD2E76B004ADDA1 /* GLBatch.cpp */; };
+		20B6367C1BD2E76B004ADDA1 /* glew.c in Sources */ = {isa = PBXBuildFile; fileRef = 20B636761BD2E76B004ADDA1 /* glew.c */; };
+		20B6367D1BD2E76B004ADDA1 /* GLShaderManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 20B636771BD2E76B004ADDA1 /* GLShaderManager.cpp */; };
+		20B6367E1BD2E76B004ADDA1 /* GLTools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 20B636781BD2E76B004ADDA1 /* GLTools.cpp */; };
+		20B6367F1BD2E76B004ADDA1 /* GLTriangleBatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 20B636791BD2E76B004ADDA1 /* GLTriangleBatch.cpp */; };
+		20B636801BD2E76B004ADDA1 /* math3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 20B6367A1BD2E76B004ADDA1 /* math3d.cpp */; };
 		20EAD5E419AA4BD3002B96DA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20EAD5E319AA4BD3002B96DA /* Foundation.framework */; };
 		20EAD5E619AA4BD3002B96DA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20EAD5E519AA4BD3002B96DA /* CoreGraphics.framework */; };
 		20EAD5E819AA4BD3002B96DA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20EAD5E719AA4BD3002B96DA /* UIKit.framework */; };
@@ -67,8 +77,8 @@
 		20EAD5FA19AA4BD3002B96DA /* WSLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20EAD5F919AA4BD3002B96DA /* WSLViewController.m */; };
 		20EAD5FC19AA4BD3002B96DA /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20EAD5FB19AA4BD3002B96DA /* Images.xcassets */; };
 		20EAD61A19AA4C31002B96DA /* WSLHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20EAD61919AA4C31002B96DA /* WSLHomeViewController.m */; };
-		20F292551BB467250072219D /* ParametricCurve.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 20F2924E1BB467250072219D /* ParametricCurve.cpp */; settings = {ASSET_TAGS = (); }; };
-		20F292561BB467250072219D /* ParametricSurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 20F292511BB467250072219D /* ParametricSurface.cpp */; settings = {ASSET_TAGS = (); }; };
+		20F292551BB467250072219D /* ParametricCurve.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 20F2924E1BB467250072219D /* ParametricCurve.cpp */; };
+		20F292561BB467250072219D /* ParametricSurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 20F292511BB467250072219D /* ParametricSurface.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -141,6 +151,33 @@
 		20A5F48E1AA41561000B390E /* Matrix.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Matrix.hpp; sourceTree = "<group>"; };
 		20A5F48F1AA41595000B390E /* Quarterunion.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Quarterunion.hpp; sourceTree = "<group>"; };
 		20B1E1411BB59B9B00246DF6 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		20B6364B1BD21A2E004ADDA1 /* DimensionsForMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DimensionsForMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		20B636531BD21A2E004ADDA1 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		20B636541BD21A2E004ADDA1 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		20B636561BD21A2E004ADDA1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		20B6365B1BD21A2E004ADDA1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		20B6365F1BD2E33F004ADDA1 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/GLUT.framework; sourceTree = DEVELOPER_DIR; };
+		20B636611BD2E346004ADDA1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
+		20B636661BD2E76B004ADDA1 /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glew.h; sourceTree = "<group>"; };
+		20B636671BD2E76B004ADDA1 /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glxew.h; sourceTree = "<group>"; };
+		20B636681BD2E76B004ADDA1 /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wglew.h; sourceTree = "<group>"; };
+		20B636691BD2E76B004ADDA1 /* GLBatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLBatch.h; sourceTree = "<group>"; };
+		20B6366A1BD2E76B004ADDA1 /* GLBatchBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLBatchBase.h; sourceTree = "<group>"; };
+		20B6366B1BD2E76B004ADDA1 /* GLFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLFrame.h; sourceTree = "<group>"; };
+		20B6366C1BD2E76B004ADDA1 /* GLFrustum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLFrustum.h; sourceTree = "<group>"; };
+		20B6366D1BD2E76B004ADDA1 /* GLGeometryTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLGeometryTransform.h; sourceTree = "<group>"; };
+		20B6366E1BD2E76B004ADDA1 /* GLMatrixStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLMatrixStack.h; sourceTree = "<group>"; };
+		20B6366F1BD2E76B004ADDA1 /* GLShaderManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLShaderManager.h; sourceTree = "<group>"; };
+		20B636701BD2E76B004ADDA1 /* GLTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLTools.h; sourceTree = "<group>"; };
+		20B636711BD2E76B004ADDA1 /* GLTriangleBatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLTriangleBatch.h; sourceTree = "<group>"; };
+		20B636721BD2E76B004ADDA1 /* math3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = math3d.h; sourceTree = "<group>"; };
+		20B636731BD2E76B004ADDA1 /* StopWatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StopWatch.h; sourceTree = "<group>"; };
+		20B636751BD2E76B004ADDA1 /* GLBatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLBatch.cpp; sourceTree = "<group>"; };
+		20B636761BD2E76B004ADDA1 /* glew.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = glew.c; sourceTree = "<group>"; };
+		20B636771BD2E76B004ADDA1 /* GLShaderManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLShaderManager.cpp; sourceTree = "<group>"; };
+		20B636781BD2E76B004ADDA1 /* GLTools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLTools.cpp; sourceTree = "<group>"; };
+		20B636791BD2E76B004ADDA1 /* GLTriangleBatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLTriangleBatch.cpp; sourceTree = "<group>"; };
+		20B6367A1BD2E76B004ADDA1 /* math3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = math3d.cpp; sourceTree = "<group>"; };
 		20EAD5E019AA4BD3002B96DA /* Dimensions.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dimensions.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20EAD5E319AA4BD3002B96DA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		20EAD5E519AA4BD3002B96DA /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -205,6 +242,15 @@
 				206BF38E19BC4EBB00549739 /* CoreGraphics.framework in Frameworks */,
 				206BF38F19BC4EBB00549739 /* UIKit.framework in Frameworks */,
 				206BF38D19BC4EBB00549739 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		20B636481BD21A2E004ADDA1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				20B636621BD2E346004ADDA1 /* OpenGL.framework in Frameworks */,
+				20B636601BD2E33F004ADDA1 /* GLUT.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -353,6 +399,76 @@
 			name = Models;
 			sourceTree = "<group>";
 		};
+		20B6364C1BD21A2E004ADDA1 /* DimensionsForMac */ = {
+			isa = PBXGroup;
+			children = (
+				20B636531BD21A2E004ADDA1 /* ViewController.h */,
+				20B636541BD21A2E004ADDA1 /* ViewController.m */,
+				20B636561BD21A2E004ADDA1 /* Assets.xcassets */,
+				20B6365B1BD21A2E004ADDA1 /* Info.plist */,
+				20B636501BD21A2E004ADDA1 /* Supporting Files */,
+			);
+			path = DimensionsForMac;
+			sourceTree = "<group>";
+		};
+		20B636501BD21A2E004ADDA1 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		20B636631BD2E76B004ADDA1 /* GLTools */ = {
+			isa = PBXGroup;
+			children = (
+				20B636641BD2E76B004ADDA1 /* include */,
+				20B636741BD2E76B004ADDA1 /* src */,
+			);
+			path = GLTools;
+			sourceTree = "<group>";
+		};
+		20B636641BD2E76B004ADDA1 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				20B636651BD2E76B004ADDA1 /* GL */,
+				20B636691BD2E76B004ADDA1 /* GLBatch.h */,
+				20B6366A1BD2E76B004ADDA1 /* GLBatchBase.h */,
+				20B6366B1BD2E76B004ADDA1 /* GLFrame.h */,
+				20B6366C1BD2E76B004ADDA1 /* GLFrustum.h */,
+				20B6366D1BD2E76B004ADDA1 /* GLGeometryTransform.h */,
+				20B6366E1BD2E76B004ADDA1 /* GLMatrixStack.h */,
+				20B6366F1BD2E76B004ADDA1 /* GLShaderManager.h */,
+				20B636701BD2E76B004ADDA1 /* GLTools.h */,
+				20B636711BD2E76B004ADDA1 /* GLTriangleBatch.h */,
+				20B636721BD2E76B004ADDA1 /* math3d.h */,
+				20B636731BD2E76B004ADDA1 /* StopWatch.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		20B636651BD2E76B004ADDA1 /* GL */ = {
+			isa = PBXGroup;
+			children = (
+				20B636661BD2E76B004ADDA1 /* glew.h */,
+				20B636671BD2E76B004ADDA1 /* glxew.h */,
+				20B636681BD2E76B004ADDA1 /* wglew.h */,
+			);
+			path = GL;
+			sourceTree = "<group>";
+		};
+		20B636741BD2E76B004ADDA1 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				20B636751BD2E76B004ADDA1 /* GLBatch.cpp */,
+				20B636761BD2E76B004ADDA1 /* glew.c */,
+				20B636771BD2E76B004ADDA1 /* GLShaderManager.cpp */,
+				20B636781BD2E76B004ADDA1 /* GLTools.cpp */,
+				20B636791BD2E76B004ADDA1 /* GLTriangleBatch.cpp */,
+				20B6367A1BD2E76B004ADDA1 /* math3d.cpp */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		20C682211AA808D400425C7E /* Math */ = {
 			isa = PBXGroup;
 			children = (
@@ -370,6 +486,7 @@
 				201CF88519AB0510001959F7 /* Demo */,
 				205F55311AA0226000D1E8E4 /* HelloArrow */,
 				2044AF551AA5B723005DA969 /* HelloCone */,
+				20B6364C1BD21A2E004ADDA1 /* DimensionsForMac */,
 				20EAD5E219AA4BD3002B96DA /* Frameworks */,
 				20EAD5E119AA4BD3002B96DA /* Products */,
 			);
@@ -383,6 +500,7 @@
 				206BF38C19BC4EBB00549739 /* DynamicSystem.app */,
 				205F55301AA0226000D1E8E4 /* HelloArrow.app */,
 				2044AF541AA5B723005DA969 /* HelloCone.app */,
+				20B6364B1BD21A2E004ADDA1 /* DimensionsForMac.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -390,6 +508,9 @@
 		20EAD5E219AA4BD3002B96DA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				20B636631BD2E76B004ADDA1 /* GLTools */,
+				20B636611BD2E346004ADDA1 /* OpenGL.framework */,
+				20B6365F1BD2E33F004ADDA1 /* GLUT.framework */,
 				201CF8B519AB13F4001959F7 /* QuartzCore.framework */,
 				20EAD5E319AA4BD3002B96DA /* Foundation.framework */,
 				20EAD5E519AA4BD3002B96DA /* CoreGraphics.framework */,
@@ -523,6 +644,23 @@
 			productReference = 206BF38C19BC4EBB00549739 /* DynamicSystem.app */;
 			productType = "com.apple.product-type.application";
 		};
+		20B6364A1BD21A2E004ADDA1 /* DimensionsForMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 20B6365E1BD21A2E004ADDA1 /* Build configuration list for PBXNativeTarget "DimensionsForMac" */;
+			buildPhases = (
+				20B636471BD21A2E004ADDA1 /* Sources */,
+				20B636481BD21A2E004ADDA1 /* Frameworks */,
+				20B636491BD21A2E004ADDA1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DimensionsForMac;
+			productName = DimensionsForMac;
+			productReference = 20B6364B1BD21A2E004ADDA1 /* DimensionsForMac.app */;
+			productType = "com.apple.product-type.application";
+		};
 		20EAD5DF19AA4BD3002B96DA /* Dimensions */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 20EAD61219AA4BD3002B96DA /* Build configuration list for PBXNativeTarget "Dimensions" */;
@@ -556,6 +694,12 @@
 					205F552F1AA0226000D1E8E4 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
+					20B6364A1BD21A2E004ADDA1 = {
+						CreatedOnToolsVersion = 7.0.1;
+					};
+					20EAD5DF19AA4BD3002B96DA = {
+						DevelopmentTeam = SR9HWZ3HDL;
+					};
 				};
 			};
 			buildConfigurationList = 20EAD5DB19AA4BD3002B96DA /* Build configuration list for PBXProject "Dimensions" */;
@@ -576,6 +720,7 @@
 				206BF38B19BC4EBB00549739 /* DynamicSystem */,
 				205F552F1AA0226000D1E8E4 /* HelloArrow */,
 				2044AF531AA5B723005DA969 /* HelloCone */,
+				20B6364A1BD21A2E004ADDA1 /* DimensionsForMac */,
 			);
 		};
 /* End PBXProject section */
@@ -619,6 +764,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		20B636491BD21A2E004ADDA1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				20B636571BD21A2E004ADDA1 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -682,6 +835,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		20B636471BD21A2E004ADDA1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				20B636551BD21A2E004ADDA1 /* ViewController.m in Sources */,
+				20B636801BD2E76B004ADDA1 /* math3d.cpp in Sources */,
+				20B6367D1BD2E76B004ADDA1 /* GLShaderManager.cpp in Sources */,
+				20B6367B1BD2E76B004ADDA1 /* GLBatch.cpp in Sources */,
+				20B6367C1BD2E76B004ADDA1 /* glew.c in Sources */,
+				20B6367E1BD2E76B004ADDA1 /* GLTools.cpp in Sources */,
+				20B6367F1BD2E76B004ADDA1 /* GLTriangleBatch.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -895,6 +1062,50 @@
 			};
 			name = Release;
 		};
+		20B6365C1BD21A2E004ADDA1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = "$(GLTOOLS_INCLUDE)/**";
+				INFOPLIST_FILE = DimensionsForMac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = FLab.example;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		20B6365D1BD21A2E004ADDA1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = "$(GLTOOLS_INCLUDE)/**";
+				INFOPLIST_FILE = DimensionsForMac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = FLab.example;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		20EAD61019AA4BD3002B96DA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -970,10 +1181,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				DEVELOPMENT_TEAM = SR9HWZ3HDL;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Dimensions/Dimensions-Prefix.pch";
 				INFOPLIST_FILE = "Dimensions/Dimensions-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_BUNDLE_IDENTIFIER = FLab.example.Dimensions;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -984,10 +1197,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				DEVELOPMENT_TEAM = SR9HWZ3HDL;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Dimensions/Dimensions-Prefix.pch";
 				INFOPLIST_FILE = "Dimensions/Dimensions-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_BUNDLE_IDENTIFIER = FLab.example.Dimensions;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1028,6 +1243,15 @@
 			buildConfigurations = (
 				206BF3B619BC4EBB00549739 /* Debug */,
 				206BF3B719BC4EBB00549739 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		20B6365E1BD21A2E004ADDA1 /* Build configuration list for PBXNativeTarget "DimensionsForMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				20B6365C1BD21A2E004ADDA1 /* Debug */,
+				20B6365D1BD21A2E004ADDA1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

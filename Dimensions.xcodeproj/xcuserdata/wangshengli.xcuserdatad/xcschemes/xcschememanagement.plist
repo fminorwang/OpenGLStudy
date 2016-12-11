@@ -14,6 +14,11 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>DimensionsForMac.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>6</integer>
+		</dict>
 		<key>DynamicSystem.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -78,6 +83,11 @@
 			<true/>
 		</dict>
 		<key>206BF3A719BC4EBB00549739</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>20B6364A1BD21A2E004ADDA1</key>
 		<dict>
 			<key>primary</key>
 			<true/>
