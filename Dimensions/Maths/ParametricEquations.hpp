@@ -40,11 +40,18 @@ class Sphere : public ParametricSurface
 {
 private:
     float m_radius;
+    vec3 m_origin;
     
 public:
-    Sphere(float radius) : m_radius(radius)
+    Sphere(float radius) : m_radius(radius), m_origin(vec3(0, 0, 0))
     {
         ParametricInterval _interval = { ivec2(40, 40), vec2(m_pi, m_pi * 2), vec2(20, 35) };
+        setInterval(_interval);
+    }
+    
+    Sphere(float radius, vec3 origin) : m_radius(radius), m_origin(origin)
+    {
+        ParametricInterval _interval = { ivec2(20, 20), vec2(m_pi, m_pi * 2), vec2(20, 35) };
         setInterval(_interval);
     }
     
@@ -52,9 +59,9 @@ public:
     {
         float u = domain.x;
         float v = domain.y;
-        float x = m_radius * sin(u) * cos(v);
-        float y = - m_radius * cos(u);
-        float z = m_radius * sin(u) * sin(v);
+        float x = m_radius * sin(u) * cos(v) + m_origin.x;
+        float y = - m_radius * cos(u) + m_origin.y;
+        float z = m_radius * sin(u) * sin(v) + m_origin.z;
         return vec3(x, y, z);
     }
 };

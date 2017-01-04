@@ -10,7 +10,8 @@
 #import "VertexShaderCompiler.h"
 
 //#include "Interfaces.hpp"
-//#include "Matrix.hpp"
+#include "Matrix.hpp"
+#include "ParametricEquations.hpp"
 
 #include <OpenGLES/ES2/glext.h>
 #include <OpenGLES/ES2/gl.h>
@@ -26,7 +27,7 @@
 typedef struct {
     float Position[3];
     float Color[4];
-} Vertex;
+} DynVertex;
 
 typedef struct {
     float Position[3];
@@ -34,9 +35,17 @@ typedef struct {
     float Color[4];
 } NormedVertx;
 
+typedef struct {
+    Sphere              *sphere;
+    vector<float>       vertexVector;
+    vector<unsigned short> indexVector;
+    GLuint              vertexSlot;
+    GLuint              indexSlot;
+} DynamicSphere;
+
 @interface DynamicViewController()
 {
-    GLuint                  _vertexBuffer;
+    GLuint                  _DynVertexBuffer;
     GLuint                  _indexBuffer;
 
     GLuint                  _sphereBuffer;
@@ -49,15 +58,15 @@ typedef struct {
     CGFloat                 _factor;
     BOOL                    _increase;
     
-    Vertex                  _movePoint;
-    Vertex                  _movePoint2;
+    DynVertex                  _movePoint;
+    DynVertex                  _movePoint2;
     
     float                   _originDistance;
     float                   _currentDistance;
     
     int                     _numberOfPoints;
-    Vertex                  *_historyPoints;
-    Vertex                  *_historyPoints2;
+    DynVertex                  *_historyPoints;
+    DynVertex                  *_historyPoints2;
     
     NormedVertx             *_pipeLinePoints;
     NormedVertx             *_pipeLinePoints2;
@@ -72,7 +81,22 @@ typedef struct {
     int                     _sphereIndexes[ 2 * 3 * NUM_OF_SPHERE_LONGLITUDES
                                            + 2 * 3 * ( NUM_OF_SPHERE_LATITUEDS - 1 ) * NUM_OF_SPHERE_LONGLITUDES ];
     
-    NormedVertx             *_spherePoints;
+//    Sphere                  *_sphere;
+//    vector<unsigned short>  _sphereIndices;
+//    vector<float>           _sphereVertex;
+//    int                     _sphereIndicesCount;
+    
+//    GLuint                  _startSphereBuffer1;
+//    GLuint                  _startSphereIndexBuffer1;
+//    Sphere                  *_startSphere1;
+//    Sphere                  *_startSphere2;
+//    vector<float>           _startSphereVector1;
+//    vector<float>           _startSphereVector2;
+//    vector<unsigned short>  _startSphereIndexVector1;
+//    vector<unsigned short>  _startSphereIndexVector2;
+    
+    DynamicSphere           _startSphere;
+    DynamicSphere           _startSphere2;
 }
 
 @end
@@ -108,26 +132,34 @@ typedef struct {
     _increase = YES;
     _radius = 0.2;
     
-    _movePoint = (Vertex) {
+    _movePoint = (DynVertex) {
         { 2.0, 2.0, 0.0 },
         { 0.0, 0.0, 0.0, 1.0 }
     };
     
-    _movePoint2 = (Vertex) {
+    _movePoint2 = (DynVertex) {
         { -1.5, -3.0, 0 },
         { 0.0, 0.0, 0.0, 1.0}
     };
     
-    _originDistance = MIN([self _distanceAtVertex:_movePoint], [self _distanceAtVertex:_movePoint2]);
+    _originDistance = MIN([self _distanceAtDynVertex:_movePoint], [self _distanceAtDynVertex:_movePoint2]);
     _currentDistance = _originDistance;
     
     _numberOfPoints = 2;
-    _historyPoints = malloc(sizeof(Vertex) * MAX_COUNT);
+    _historyPoints = new DynVertex[MAX_COUNT];
     _historyPoints[_numberOfPoints - 2] = _movePoint;
     _historyPoints[_numberOfPoints - 1] = _movePoint2;
     
-    _pipeLinePoints = malloc(sizeof(NormedVertx) * MAX_COUNT * PIPE_CIRCLE_POINT_COUNT);
-    _pipeLinePoints2 = malloc(sizeof(NormedVertx) * MAX_COUNT * PIPE_CIRCLE_POINT_COUNT);
+    _pipeLinePoints = new NormedVertx[MAX_COUNT * PIPE_CIRCLE_POINT_COUNT];
+    _pipeLinePoints2 = new NormedVertx[MAX_COUNT * PIPE_CIRCLE_POINT_COUNT];
+    
+    _startSphere.sphere = new Sphere(_radius, vec3(2.0, 2.0, 0.0));
+    _startSphere.sphere->generateVertices(_startSphere.vertexVector, VertexFlagsNormal);
+    _startSphere.sphere->generateTriangleIndices(_startSphere.indexVector);
+    
+    _startSphere2.sphere = new Sphere(_radius, vec3(-1.5, -3.0, 0.0));
+    _startSphere2.sphere->generateVertices(_startSphere2.vertexVector, VertexFlagsNormal);
+    _startSphere2.sphere->generateTriangleIndices(_startSphere2.indexVector);
     
     [self _setupGL];
 }
@@ -152,9 +184,9 @@ typedef struct {
     _factor = 0.1f;
     
     // 轨迹
-    glGenBuffers(1, &_vertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _numberOfPoints, _historyPoints, GL_STATIC_DRAW);
+    glGenBuffers(1, &_DynVertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, _DynVertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(DynVertex) * _numberOfPoints, _historyPoints, GL_STATIC_DRAW);
     
     glGenBuffers(1, &_pipeLineBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, _pipeLineBuffer);
@@ -170,19 +202,43 @@ typedef struct {
     
     //glGenBuffers(1, &_indexBuffer);
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Vertex) * _numberOfPoints, &_historyPoints, GL_STATIC_DRAW);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(DynVertex) * _numberOfPoints, &_historyPoints, GL_STATIC_DRAW);
     
     // sphere
-    glGenBuffers(1, &_sphereBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, _sphereBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(NormedVertx) * (NUM_OF_SPHERE_LATITUEDS * NUM_OF_SPHERE_LONGLITUDES + 2),
-                 _spherePoints , GL_STATIC_DRAW);
+//    glGenBuffers(1, &_sphereBuffer);
+//    glBindBuffer(GL_ARRAY_BUFFER, _sphereBuffer);
+//    glBufferData(GL_ARRAY_BUFFER, sizeof(NormedVertx) * ( _sphere->getVertexCount()),
+//                 &_sphereVertex , GL_STATIC_DRAW);
+//    
+//    glGenBuffers(1, &_sphereIndexBuffer);
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _sphereIndexBuffer);
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * _sphere->getTriangleIndexCount(), &_sphereIndices, GL_STATIC_DRAW);
     
-    /*
-    glGenBuffers(1, &_sphereIndexBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _sphereIndexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * 12 , _sphereIndexes, GL_STATIC_DRAW);
-     */
+    glGenBuffers(1, &_startSphere.vertexSlot);
+    glBindBuffer(GL_ARRAY_BUFFER, _startSphere.vertexSlot);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(_startSphere.vertexVector[0]) * 6 * _startSphere.sphere->getVertexCount(),
+                 &_startSphere.vertexVector[0],
+                 GL_STATIC_DRAW);
+    
+    glGenBuffers(1, &_startSphere.indexSlot);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _startSphere.indexSlot);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                 sizeof(_startSphere.indexVector[0]) * _startSphere.sphere->getTriangleIndexCount(),
+                 &_startSphere.indexVector[0],
+                 GL_STATIC_DRAW);
+    
+    glGenBuffers(1, &_startSphere2.vertexSlot);
+    glBindBuffer(GL_ARRAY_BUFFER, _startSphere2.vertexSlot);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(_startSphere2.vertexVector[0]) * 6 * _startSphere2.sphere->getVertexCount(),
+                 &_startSphere2.vertexVector[0],
+                 GL_STATIC_DRAW);
+    
+    glGenBuffers(1, &_startSphere2.indexSlot);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _startSphere2.indexSlot);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                 sizeof(_startSphere2.indexVector[0]) * _startSphere2.sphere->getTriangleIndexCount(), &_startSphere2.indexVector[0],
+                 GL_STATIC_DRAW);
     
     GLuint _colorRenderBuffer;
     GLuint _depthRenderBuffer;
@@ -208,7 +264,7 @@ typedef struct {
 - (void)_tearDownGL
 {
     [EAGLContext setCurrentContext:self.context];
-    glDeleteBuffers(1, &_vertexBuffer);
+    glDeleteBuffers(1, &_DynVertexBuffer);
     //glDeleteBuffers(1, &_indexBuffer);
     
     glDeleteBuffers(1, &_sphereBuffer);
@@ -239,7 +295,7 @@ typedef struct {
 {
     float dt = self.timeSinceLastUpdate * 2;
     
-    float _newDistance = MIN([self _distanceAtVertex:_movePoint], [self _distanceAtVertex:_movePoint2]);
+    float _newDistance = MIN([self _distanceAtDynVertex:_movePoint], [self _distanceAtDynVertex:_movePoint2]);
     _currentDistance = MIN(_newDistance, _currentDistance);
     
 //    _factor = _originFactor * ( _originDistance / _currentDistance );
@@ -270,6 +326,12 @@ typedef struct {
     float y1 = _movePoint.Position[1];
     float x0 = x;
     float y0 = y;
+    if ( dt == 0 ) {
+        float _dt = -0.01;
+        x0 += _dt * ( a * x + b * y);
+        y0 += _dt * ( c * x + d * y);
+    }
+    
     float _sqrt = sqrtf( ( x1 - x0 ) * ( x1 - x0) + ( y1 - y0 ) * ( y1 - y0 ) );
     for ( int i = 0 ; i < PIPE_CIRCLE_POINT_COUNT ; i++ ) {
         
@@ -322,6 +384,11 @@ typedef struct {
     y1 = _movePoint2.Position[1];
     x0 = x;
     y0 = y;
+    if ( dt == 0 ) {
+        float _dt = -0.01;
+        x0 += _dt * ( a * x + b * y);
+        y0 += _dt * ( c * x + d * y);
+    }
     _sqrt = sqrtf( ( x1 - x0 ) * ( x1 - x0) + ( y1 - y0 ) * ( y1 - y0 ) );
     for ( int i = 0 ; i < PIPE_CIRCLE_POINT_COUNT ; i++ ) {
         
@@ -346,11 +413,11 @@ typedef struct {
     
     _historyPoints[_numberOfPoints - 1] = _movePoint2;
 
-    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _numberOfPoints, _historyPoints, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, _DynVertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(DynVertex) * _numberOfPoints, _historyPoints, GL_STATIC_DRAW);
     
-    glBindBuffer(GL_ARRAY_BUFFER, _sphereBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(NormedVertx) * (2 + NUM_OF_SPHERE_LATITUEDS * NUM_OF_SPHERE_LONGLITUDES), _spherePoints, GL_STATIC_DRAW);
+//    glBindBuffer(GL_ARRAY_BUFFER, _sphereBuffer);
+//    glBufferData(GL_ARRAY_BUFFER, sizeof(NormedVertx) * (2 + NUM_OF_SPHERE_LATITUEDS * NUM_OF_SPHERE_LONGLITUDES), _spherePoints, GL_STATIC_DRAW);
     
     glBindBuffer(GL_ARRAY_BUFFER, _pipeLineBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(NormedVertx) * ( _numberOfPoints / 2 - 1 ) * PIPE_CIRCLE_POINT_COUNT , _pipeLinePoints, GL_STATIC_DRAW);
@@ -362,6 +429,30 @@ typedef struct {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,
                  sizeof(unsigned short) * MAX(0, ( _numberOfPoints / 2 - 2 ) * 2 * 3 * PIPE_CIRCLE_POINT_COUNT),
                  _pipeIndices,
+                 GL_STATIC_DRAW);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, _startSphere.vertexSlot);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(_startSphere.vertexVector[0]) * 6 * _startSphere.sphere->getVertexCount(),
+                 &_startSphere.vertexVector[0],
+                 GL_STATIC_DRAW);
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _startSphere.indexSlot);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                 sizeof(_startSphere.indexVector[0]) * _startSphere.sphere->getTriangleIndexCount(),
+                 &_startSphere.indexVector[0],
+                 GL_STATIC_DRAW);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, _startSphere2.vertexSlot);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(_startSphere2.vertexVector[0]) * 6 * _startSphere2.sphere->getVertexCount(),
+                 &_startSphere2.vertexVector[0],
+                 GL_STATIC_DRAW);
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _startSphere2.indexSlot);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                 sizeof(_startSphere2.indexVector[0]) * _startSphere2.sphere->getTriangleIndexCount(),
+                 &_startSphere2.indexVector[0],
                  GL_STATIC_DRAW);
 }
 
@@ -416,21 +507,36 @@ typedef struct {
     
     // 画图
     
-    glBindBuffer(GL_ARRAY_BUFFER, _pipeLineBuffer);
+    // start sphere
+    
+    glBindBuffer(GL_ARRAY_BUFFER, _startSphere.vertexSlot);
     glEnableVertexAttribArray(_positionSlot);
-    glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(NormedVertx), offsetof(NormedVertx, Position));
+    glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+    glEnableVertexAttribArray(_normalSlot);
+    glVertexAttribPointer(_normalSlot, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (const GLvoid *)sizeof(vec3));
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _startSphere.indexSlot);
+    glDrawElements(GL_TRIANGLES, (GLsizei)(_startSphere.sphere->getTriangleIndexCount()), GL_UNSIGNED_SHORT, 0);
+    
+    // path 1
+    glBindBuffer(GL_ARRAY_BUFFER, _pipeLineBuffer);
+    
+    glEnableVertexAttribArray(_positionSlot);
+    glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(NormedVertx), (const GLvoid *)offsetof(NormedVertx, Position));
+    
     glEnableVertexAttribArray(_normalSlot);
     glVertexAttribPointer(_normalSlot, 3, GL_FLOAT, GL_FALSE, sizeof(NormedVertx), (const GLvoid *)offsetof(NormedVertx, Normal));
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _pipeIndicesBuffer);
     glDrawElements(GL_TRIANGLES, MAX(0, ( _numberOfPoints / 2 - 2 ) * PIPE_CIRCLE_POINT_COUNT * 2 * 3), GL_UNSIGNED_SHORT, 0);
-    glDrawArrays(GL_POINTS, 0, ( _numberOfPoints / 2 - 1 ) * PIPE_CIRCLE_POINT_COUNT);
+//    glDrawArrays(GL_POINTS, 0, ( _numberOfPoints / 2 - 1 ) * PIPE_CIRCLE_POINT_COUNT);
     
+    // path 2
     glUniform3f(_ambientSlot, 0.2, 0.5, 0.2);
     
     glBindBuffer(GL_ARRAY_BUFFER, _pipeLineBuffer2);
     glEnableVertexAttribArray(_positionSlot);
-    glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(NormedVertx), offsetof(NormedVertx, Position));
+    glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(NormedVertx), (const GLvoid *)offsetof(NormedVertx, Position));
     glEnableVertexAttribArray(_normalSlot);
     glVertexAttribPointer(_normalSlot, 3, GL_FLOAT, GL_FALSE, sizeof(NormedVertx), (const GLvoid *)offsetof(NormedVertx, Normal));
     
@@ -438,54 +544,23 @@ typedef struct {
     glDrawElements(GL_TRIANGLES, MAX(0, ( _numberOfPoints / 2 - 2 ) * PIPE_CIRCLE_POINT_COUNT * 2 * 3), GL_UNSIGNED_SHORT, 0);
     glDrawArrays(GL_POINTS, 0, ( _numberOfPoints / 2 - 1 ) * PIPE_CIRCLE_POINT_COUNT);
     
+    // start sphere 2
+    
+    glBindBuffer(GL_ARRAY_BUFFER, _startSphere2.vertexSlot);
+    glEnableVertexAttribArray(_positionSlot);
+    glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+    glEnableVertexAttribArray(_normalSlot);
+    glVertexAttribPointer(_normalSlot, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (const GLvoid *)sizeof(vec3));
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _startSphere2.indexSlot);
+    glDrawElements(GL_TRIANGLES, (GLsizei)(_startSphere2.sphere->getTriangleIndexCount()), GL_UNSIGNED_SHORT, 0);
+    
     [self.context presentRenderbuffer:GL_RENDERBUFFER];
-    
-    // glBindVertexArrayOES(_vertexBuffer);
-    
-    // Render the object again with ES2
-//    glUseProgram(_program);
-//    
-//    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, self.effect.transform.modelviewMatrix.m);
-//    glUniformMatrix4fv(uniforms[UNIFORM_PROJECTION_MATRIX], 1, 0, self.effect.transform.projectionMatrix.m);
-//    
-//    // ----------------------------------------
-//    
-//    glBindBuffer(GL_ARRAY_BUFFER, _sphereBuffer);
-//    
-//    glEnableVertexAttribArray(GLKVertexAttribPosition);
-//    glVertexAttribPointer(GLKVertexAttribPosition,          // 设置属性：顶点位置
-//                          3,                                // 每个顶点需要多少个值来描述
-//                          GL_FLOAT,                         // 每个值的类型
-//                          GL_FALSE,                         // always set to false
-//                          sizeof(NormedVertx),                   // 数据结构大小
-//                          offsetof(NormedVertx, Position));      // 数据结构中的偏位置
-    
-//    glEnableVertexAttribArray(GLKVertexAttribNormal);
-//    glVertexAttribPointer(GLKVertexAttribNormal,
-//                          3,
-//                          GL_FLOAT,
-//                          GL_FALSE,
-//                          sizeof(NormedVertx),
-//                          offsetof(NormedVertx, Normal));
-    // glBindVertexArrayOES(_vertexBuffer);
-    
-    // Render the object again with ES2
-//    glUseProgram(_sphereProgram);
-//    
-//    glUniformMatrix4fv(sphereUniforms[S_UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, self.effect.transform.modelviewMatrix.m);
-//    glUniformMatrix4fv(sphereUniforms[S_UNIFORM_PROJECTION_MATRIX], 1, 0, self.effect.transform.projectionMatrix.m);
-//    glUniform1f(sphereUniforms[S_RADIUS], 0.5 * ( 0.2 / _factor ));
-//    glUniform1f(sphereUniforms[S_LATITUDE_COUNTS], NUM_OF_SPHERE_LATITUEDS + 2.0);
-//    glUniform3fv(sphereUniforms[S_CENTER_POINT], 1, _movePoint.Position );
-//    
-//    glDrawElements(GL_TRIANGLES, 3 * NUM_OF_SPHERE_LONGLITUDES, GL_UNSIGNED_INT, _sphereIndexes);
-
-    // glDrawArrays(GL_TRIANGLES, 0 , 6 /*NUM_OF_SPHERE_LATITUEDS * NUM_OF_SPHERE_LONGLITUDES + 2*/ );
 }
 
-- (float)_distanceAtVertex:(Vertex)vertex
+- (float)_distanceAtDynVertex:(DynVertex)DynVertex
 {
-    return [self _distanceForX:vertex.Position[0] Y:vertex.Position[1] Z:vertex.Position[2]];
+    return [self _distanceForX:DynVertex.Position[0] Y:DynVertex.Position[1] Z:DynVertex.Position[2]];
 }
 
 - (float)_distanceForX:(float)x Y:(float)y Z:(float)z

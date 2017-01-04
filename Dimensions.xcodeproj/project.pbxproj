@@ -27,7 +27,7 @@
 		201CF8B619AB13F4001959F7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 201CF8B519AB13F4001959F7 /* QuartzCore.framework */; };
 		201CF8B719AB13FA001959F7 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 201CF88119AB0510001959F7 /* GLKit.framework */; };
 		201CF8BB19AB2008001959F7 /* FComplexNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = 201CF8BA19AB2008001959F7 /* FComplexNumber.m */; };
-		2039FCDD19B9BC15009391B9 /* DynamicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2039FCDC19B9BC15009391B9 /* DynamicViewController.m */; };
+		2039FCDD19B9BC15009391B9 /* DynamicViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2039FCDC19B9BC15009391B9 /* DynamicViewController.mm */; };
 		2044AF591AA5B723005DA969 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2044AF581AA5B723005DA969 /* main.m */; };
 		2044AF5C1AA5B723005DA969 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2044AF5B1AA5B723005DA969 /* AppDelegate.m */; };
 		2044AF621AA5B723005DA969 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2044AF601AA5B723005DA969 /* Main.storyboard */; };
@@ -107,7 +107,7 @@
 		2034533E1AA0D39800B94FAE /* Simple.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Simple.vert; sourceTree = "<group>"; };
 		203453401AA0D3C600B94FAE /* Simple.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Simple.frag; sourceTree = "<group>"; };
 		2039FCDB19B9BC15009391B9 /* DynamicViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicViewController.h; sourceTree = "<group>"; };
-		2039FCDC19B9BC15009391B9 /* DynamicViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DynamicViewController.m; sourceTree = "<group>"; };
+		2039FCDC19B9BC15009391B9 /* DynamicViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DynamicViewController.mm; sourceTree = "<group>"; };
 		2044AF541AA5B723005DA969 /* HelloCone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HelloCone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2044AF571AA5B723005DA969 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2044AF581AA5B723005DA969 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -273,7 +273,7 @@
 			isa = PBXGroup;
 			children = (
 				2039FCDB19B9BC15009391B9 /* DynamicViewController.h */,
-				2039FCDC19B9BC15009391B9 /* DynamicViewController.m */,
+				2039FCDC19B9BC15009391B9 /* DynamicViewController.mm */,
 				206BF3BF19BC52CA00549739 /* DynamicSystemShader.vsh */,
 				206BF3C119BC52DD00549739 /* DynamicSystemShader.fsh */,
 				201ADC0819C740A700CB2E62 /* SphereShader.vsh */,
@@ -856,7 +856,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2039FCDD19B9BC15009391B9 /* DynamicViewController.m in Sources */,
+				2039FCDD19B9BC15009391B9 /* DynamicViewController.mm in Sources */,
 				20F292551BB467250072219D /* ParametricCurve.cpp in Sources */,
 				20EAD61A19AA4C31002B96DA /* WSLHomeViewController.m in Sources */,
 				201CF8BB19AB2008001959F7 /* FComplexNumber.m in Sources */,
