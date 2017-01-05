@@ -138,9 +138,10 @@ struct Matrix4
     {
         Vector4<T> v;
         v.x = x.x * b.x + x.y * b.y + x.z * b.z + x.w * b.w;
-        v.x = y.x * b.x + y.y * b.y + y.z * b.z + y.w * b.w;
-        v.x = z.x * b.x + z.y * b.y + z.z * b.z + z.w * b.w;
-        v.x = w.x * b.x + w.y * b.y + w.z * b.z + w.w * b.w;
+        v.y = y.x * b.x + y.y * b.y + y.z * b.z + y.w * b.w;
+        v.z = z.x * b.x + z.y * b.y + z.z * b.z + z.w * b.w;
+        v.w = w.x * b.x + w.y * b.y + w.z * b.z + w.w * b.w;
+        return v;
     }
     
     Matrix4& operator *= (const Matrix4& b) const
@@ -247,9 +248,9 @@ struct Matrix4
         m.x.z = ( 1 - c ) * axis.x * axis.z + axis.y * s;
         m.y.x = ( 1 - c ) * axis.x * axis.y + axis.z * s;
         m.y.y = c + ( 1 - c ) * axis.y * axis.y;
-        m.x.y = ( 1 - c ) * axis.y * axis.z - axis.x * s;
-        m.x.z = ( 1 - c ) * axis.x * axis.z - axis.y * s;
-        m.y.x = ( 1 - c ) * axis.y * axis.z + axis.x * s;
+        m.y.z = ( 1 - c ) * axis.y * axis.z - axis.x * s;
+        m.z.x = ( 1 - c ) * axis.x * axis.z - axis.y * s;
+        m.z.y = ( 1 - c ) * axis.y * axis.z + axis.x * s;
         m.z.z = c + ( 1 - c ) * axis.z * axis.z;
         return m;
     }

@@ -10,6 +10,7 @@
 #define DynamicPath_hpp
 
 #include "ParametricEquations.hpp"
+#include "Matrix.hpp"
 #include <OpenGLES/gltypes.h>
 #include <stdio.h>
 
@@ -43,6 +44,29 @@ public:
     // util: create next vertices
     virtual vector<DynamicVertex> createPathVertices(vec3 lastPoint, vec3 currentPoint, float radius) {
         vector<DynamicVertex> _arr = vector<DynamicVertex>();
+        vec3 _axis = currentPoint - lastPoint;
+        _axis.normalize();
+        
+        float _degree = acos(_axis.z) * 180 / 3.1415926;
+        vec3 _rotateAxis = vec3(-_axis.y, _axis.x, 0);
+        _rotateAxis.normalize();
+        
+        Matrix4<float> _rotateMatrix = Matrix4<float>::rotate(_degree, _rotateAxis);
+        for ( int i = 0 ; i < m_pipeCount ; i++ ) {
+            float _angle = 2 * M_PI * i / m_pipeCount;
+            
+            vec4 _offset = vec4(m_pipeRadius * cos(_angle), m_pipeRadius * sin(_angle), 0, 0);
+            _offset = _rotateMatrix * _offset;
+            
+            vec3 _position = vec3(currentPoint.x + _offset.x,
+                                  currentPoint.y + _offset.y,
+                                  currentPoint.z + _offset.z);
+            vec3 _normal = _position - currentPoint;
+            _normal.normalize();
+            
+            DynamicVertex _vertex = {_position, _normal};
+            _arr.push_back(_vertex);
+        }
         return _arr;
     }
     
@@ -103,37 +127,37 @@ public:
         return _next;
     }
     
-    vector<DynamicVertex> createPathVertices(vec3 lastPoint, vec3 currentPoint, float radius) {
-        vector<DynamicVertex> _arr = vector<DynamicVertex>();
-        
-        // 管道上的点
-        float x1 = currentPoint.x;
-        float y1 = currentPoint.y;
-        float x0 = lastPoint.x;
-        float y0 = lastPoint.y;
-        
-        float _sqrt = sqrtf( ( x1 - x0 ) * ( x1 - x0) + ( y1 - y0 ) * ( y1 - y0 ) );
-        for ( int i = 0 ; i < m_pipeCount ; i++ ) {
-            DynamicVertex _vertex = {vec3(0, 0, 0), vec3(0, 0, 0) };
-            _vertex.position.x = x1 - m_pipeRadius * sin( 2 * M_PI * i / m_pipeCount ) * ( y1 - y0 ) / _sqrt;
-            _vertex.position.y = y1 + m_pipeRadius * sin( 2 * M_PI * i / m_pipeCount ) * ( x1 - x0 ) / _sqrt;
-            _vertex.position.z = m_pipeRadius * cos( 2 * M_PI * i / m_pipeCount );
-            
-            _vertex.normal.x = _vertex.position.x - x1;
-            _vertex.normal.y = _vertex.position.y - y1;
-            _vertex.normal.z = _vertex.position.z - 0;
-            
-            float _length = sqrtf( _vertex.normal.x * _vertex.normal.x
-                                  + _vertex.normal.y * _vertex.normal.y
-                                  + _vertex.normal.z * _vertex.normal.z );
-            _vertex.normal.x = _vertex.normal.x / _length;
-            _vertex.normal.y = _vertex.normal.y / _length;
-            _vertex.normal.z = _vertex.normal.z / _length;
-            
-            _arr.insert(_arr.end(), _vertex);
-        }
-        return _arr;
-    }
+//    vector<DynamicVertex> createPathVertices(vec3 lastPoint, vec3 currentPoint, float radius) {
+//        vector<DynamicVertex> _arr = vector<DynamicVertex>();
+//        
+//        // 管道上的点
+//        float x1 = currentPoint.x;
+//        float y1 = currentPoint.y;
+//        float x0 = lastPoint.x;
+//        float y0 = lastPoint.y;
+//        
+//        float _sqrt = sqrtf( ( x1 - x0 ) * ( x1 - x0) + ( y1 - y0 ) * ( y1 - y0 ) );
+//        for ( int i = 0 ; i < m_pipeCount ; i++ ) {
+//            DynamicVertex _vertex = {vec3(0, 0, 0), vec3(0, 0, 0) };
+//            _vertex.position.x = x1 - m_pipeRadius * sin( 2 * M_PI * i / m_pipeCount ) * ( y1 - y0 ) / _sqrt;
+//            _vertex.position.y = y1 + m_pipeRadius * sin( 2 * M_PI * i / m_pipeCount ) * ( x1 - x0 ) / _sqrt;
+//            _vertex.position.z = m_pipeRadius * cos( 2 * M_PI * i / m_pipeCount );
+//            
+//            _vertex.normal.x = _vertex.position.x - x1;
+//            _vertex.normal.y = _vertex.position.y - y1;
+//            _vertex.normal.z = _vertex.position.z - 0;
+//            
+//            float _length = sqrtf( _vertex.normal.x * _vertex.normal.x
+//                                  + _vertex.normal.y * _vertex.normal.y
+//                                  + _vertex.normal.z * _vertex.normal.z );
+//            _vertex.normal.x = _vertex.normal.x / _length;
+//            _vertex.normal.y = _vertex.normal.y / _length;
+//            _vertex.normal.z = _vertex.normal.z / _length;
+//            
+//            _arr.insert(_arr.end(), _vertex);
+//        }
+//        return _arr;
+//    }
 };
 
 #endif /* DynamicPath_hpp */
