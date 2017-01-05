@@ -22,7 +22,7 @@
 #define NUM_OF_ALL_INDICES              10000
 #define MAX_COUNT                       1000000
 #define PIPE_CIRCLE_POINT_COUNT         10
-#define PIPE_RADIUS                     0.5
+#define PIPE_RADIUS                     0.2
 
 #define NUM_OF_SPHERE_LATITUEDS         24
 #define NUM_OF_SPHERE_LONGLITUDES       24
@@ -84,7 +84,7 @@
     __view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
     
     _increase = YES;
-    _radius = 0.2;
+    _radius = PIPE_RADIUS;
     
     _startSphere = DynamicSphere(vec3(2.0, 2.0, 0.0), _radius);
     _startSphere2 = DynamicSphere(vec3(-1.5, -3.0, 0.0), _radius);
@@ -174,7 +174,7 @@
     float dt = self.timeSinceLastUpdate * 2;
 
     _factor = _factor * powf(2, dt / 15.f);
-    _radius = 0.02 / _factor ;
+    _radius = PIPE_RADIUS / 10.f / _factor ;
     
     if ( dt > 0 ) {
         _path1->m_pipeRadius = _radius;
